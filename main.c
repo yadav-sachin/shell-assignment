@@ -42,6 +42,8 @@ void shell_execute(char **args)
             execvp("./resources/buake_ls", args);
         else if(strcmp(command, "grep") == 0)
             execvp("./resources/buake_grep", args);
+        else if(strcmp(command, "cat") == 0)
+            execvp("./resources/buake_cat", args);
         else 
             execvp(args[0], args);
     }else {
