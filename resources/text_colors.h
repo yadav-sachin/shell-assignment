@@ -1,6 +1,6 @@
 void text_color_yellow()
 {
-    printf("\033[1;33m");
+    printf("\033[0;33m");
 }
 
 void text_color_green()

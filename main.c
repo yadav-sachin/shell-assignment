@@ -40,6 +40,8 @@ void shell_execute(char **args)
         // Inside the child process
         if (strcmp(command, "ls") == 0)
             execvp("./resources/buake_ls", args);
+        else if(strcmp(command, "grep") == 0)
+            execvp("./resources/buake_grep", args);
         else 
             execvp(args[0], args);
     }else {
