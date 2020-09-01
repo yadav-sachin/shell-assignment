@@ -46,6 +46,8 @@ void shell_execute(char **args)
             execvp("./resources/buake_cat", args);
         else if(strcmp(command, "mv") == 0)
             execvp("./resources/buake_mv", args);
+        else if(strcmp(command, "cp") == 0)
+            execvp("./resources/buake_cp", args);
         else 
             execvp(args[0], args);
     }else {
@@ -57,11 +59,16 @@ void shell_loop()
 {
     char line[MAX_INP];
     char **args;
+    char cwd[MAX_INP];
     while (1)
     {
+        text_color_magenta();
+        if (getcwd(cwd, sizeof(cwd)) != NULL)
+            printf("~%s :", cwd);
         text_color_green();
-        printf("~$ ");
+        printf(">$");
         text_color_reset();
+        printf(" ");
         fgets(line, MAX_INP, stdin);
         args = tokenize_line(line);
         shell_execute(args);
