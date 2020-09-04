@@ -31,9 +31,20 @@ void shell_execute_fork(char **args)
 {
     pid_t pid = fork();
     char *command = args[0];
+    int background_flag = 0;
+    for (int i = 0; args[i] != NULL; ++i)
+    {
+        if (strcmp(args[i], "&") == 0)
+        {
+            background_flag = 1;
+            args[i] = NULL;
+            break;
+        }
+    }
     if (pid < 0)
     {
         // forking was unsuccessful
+
     }
     else if(pid == 0)
     {
@@ -50,10 +61,13 @@ void shell_execute_fork(char **args)
             execvp("./resources/buake_cp", args);
         else if(strcmp(command, "rm") == 0)
             execvp("./resources/buake_rm", args);
+        else if(strcmp(command, "mkdir") == 0)
+            execvp("./resources/buake_mkdir", args);
         else 
             execvp(args[0], args);
     }else {
-        waitpid(pid, NULL, 0);
+        if (background_flag == 0)
+            waitpid(pid, NULL, 0);
     }
 }
 
