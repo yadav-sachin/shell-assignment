@@ -5,13 +5,15 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <dirent.h>
-#include "resources/text_colors.h"
-#include "resources/launch_animation.h"
-#include "resources/commands.h"
 
 const int MAX_INP = (1256);
 const int MAX_ARG = 256;
 const char* CH_DELIM = " \t\r\n\a";
+
+#include "headers/text_colors.h"
+#include "headers/launch_animation.h"
+#include "headers/commands.h"
+
 
 char **tokenize_line(char *line)
 {
@@ -29,8 +31,6 @@ char **tokenize_line(char *line)
 
 void shell_execute_fork(char **args)
 {
-    pid_t pid = fork();
-    char *command = args[0];
     int background_flag = 0;
     for (int i = 0; args[i] != NULL; ++i)
     {
@@ -41,6 +41,8 @@ void shell_execute_fork(char **args)
             break;
         }
     }
+    pid_t pid = fork();
+    char *command = args[0];
     if (pid < 0)
     {
         // forking was unsuccessful
@@ -50,52 +52,24 @@ void shell_execute_fork(char **args)
     {
         // Inside the child process
         if (strcmp(command, "ls") == 0)
-            execvp("./resources/buake_ls", args);
+            execvp("./bin/buake_ls", args);
         else if(strcmp(command, "grep") == 0)
-            execvp("./resources/buake_grep", args);
+            execvp("./bin/buake_grep", args);
         else if(strcmp(command, "cat") == 0)
-            execvp("./resources/buake_cat", args);
+            execvp("./bin/buake_cat", args);
         else if(strcmp(command, "mv") == 0)
-            execvp("./resources/buake_mv", args);
+            execvp("./bin/buake_mv", args);
         else if(strcmp(command, "cp") == 0)
-            execvp("./resources/buake_cp", args);
+            execvp("./bin/buake_cp", args);
         else if(strcmp(command, "rm") == 0)
-            execvp("./resources/buake_rm", args);
+            execvp("./bin/buake_rm", args);
         else if(strcmp(command, "mkdir") == 0)
-            execvp("./resources/buake_mkdir", args);
+            execvp("./bin/buake_mkdir", args);
         else 
             execvp(args[0], args);
     }else {
         if (background_flag == 0)
             waitpid(pid, NULL, 0);
-    }
-}
-
-void buake_cd(char **args)
-{
-    char *path = args[1];
-    if (path)
-    {
-        int status = chdir(path);
-        if (status != 0)
-        {
-            text_color_red();
-            printf("cd: no such file or directory: %s\n", path);
-            text_color_reset();
-        }
-    }
-    else chdir("/");
-}
-
-void buake_pwd()
-{
-    char curr_dir[MAX_INP];
-    if ( getcwd(curr_dir, sizeof(curr_dir)) != NULL)
-        printf("%s\n", curr_dir);   
-    else {
-        text_color_red();
-        printf("Current Directory Info Denied\n");
-        text_color_reset();
     }
 }
 
@@ -112,14 +86,17 @@ void shell_execute(char **args)
 
 void shell_loop()
 {
-    char line[MAX_INP];
+    char line[MAX_INP], user[MAX_INP], cwd[MAX_INP], host[MAX_INP];
     char **args;
-    char cwd[MAX_INP];
     while (1)
     {
-        text_color_magenta();
+        text_color_green();
+        getlogin_r(user, MAX_INP);
+        gethostname(host, MAX_INP);
+        printf("%s@%s:", user, host);
+        text_color_blue();
         if (getcwd(cwd, sizeof(cwd)) != NULL)
-            printf("~%s :", cwd);
+            printf("~%s:", cwd);
         text_color_green();
         printf(">$");
         text_color_reset();

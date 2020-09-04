@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <dirent.h>
-#include "text_colors.h"
+#include "../headers/text_colors.h"
 
 int main(int argc, char *argv[])
 {
